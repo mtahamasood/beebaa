@@ -2,8 +2,9 @@
 title: 'Tic-Tac-Toe Web App (React + Vite + TypeScript)'
 type: 'feature'
 created: '2026-08-17'
-status: 'ready-for-dev'
+status: 'done'
 review_loop_iteration: 0
+baseline_commit: '4ddb60ac13d9894d9c94d43182e9a93b77670139'
 context: []
 ---
 
@@ -63,15 +64,15 @@ Greenfield — every file is new; nothing existing to reuse or preserve.
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] toolchain files (see Code Map) -- scaffold -- one coherent setup; unbuildable if split
-- [ ] `src/game/logic.ts` -- types, result detection returning the winning line, minimax `bestMove` -- pure core everything depends on
-- [ ] `src/game/logic.test.ts` -- wins in every row/column/diagonal, draw, occupied-square rejection, and `bestMove` taking an immediate win and blocking an immediate loss -- proves the unbeatable claim
-- [ ] `src/hooks/useScores.ts` -- persist counters; guard parse failure, wrong shape, throwing storage
-- [ ] `src/hooks/useGame.ts` -- board/turn/mode/result; reject illegal clicks; schedule and lock input during the computer's reply -- legality in one place
-- [ ] `src/components/Square.tsx`, `Board.tsx` -- accessible buttons, grid, winning-square marking
-- [ ] `src/components/ModeSelector.tsx`, `Scoreboard.tsx` -- mode switching; score display and reset
-- [ ] `src/App.tsx` -- compose tree, `aria-live` status, increment scores exactly once per game
-- [ ] `src/styles.css` -- 320px-up layout, winning highlight, visible focus
+- [x] toolchain files (see Code Map) -- scaffold -- one coherent setup; unbuildable if split
+- [x] `src/game/logic.ts` -- types, result detection returning the winning line, minimax `bestMove` -- pure core everything depends on
+- [x] `src/game/logic.test.ts` -- wins in every row/column/diagonal, draw, occupied-square rejection, and `bestMove` taking an immediate win and blocking an immediate loss -- proves the unbeatable claim
+- [x] `src/hooks/useScores.ts` -- persist counters; guard parse failure, wrong shape, throwing storage
+- [x] `src/hooks/useGame.ts` -- board/turn/mode/result; reject illegal clicks; schedule and lock input during the computer's reply -- legality in one place
+- [x] `src/components/Square.tsx`, `Board.tsx` -- accessible buttons, grid, winning-square marking
+- [x] `src/components/ModeSelector.tsx`, `Scoreboard.tsx` -- mode switching; score display and reset
+- [x] `src/App.tsx` -- compose tree, `aria-live` status, increment scores exactly once per game
+- [x] `src/styles.css` -- 320px-up layout, winning highlight, visible focus
 
 **Acceptance Criteria:**
 - Given a fresh clone, when `npm install && npm run build` runs, then it completes with no TypeScript or build errors.
@@ -111,3 +112,60 @@ useEffect(() => {
 - Several games vs computer while trying to win: all end in a loss or draw.
 - Reload: scores persist. Reset: counters zero, and stay zero after reload.
 - 320px viewport: board stays square, readable, usable.
+
+## Suggested Review Order
+
+**Game core — pure rules and the unbeatable AI**
+
+- Depth-adjusted minimax prefers faster wins, slower losses; no pruning needed at 9 cells.
+  [`logic.ts:64`](../../src/game/logic.ts#L64)
+
+- Result detection returns the winning line so the UI can highlight it.
+  [`logic.ts:41`](../../src/game/logic.ts#L41)
+
+- Exhaustive proof: every legal human game ends in computer win or draw.
+  [`logic.test.ts:96`](../../src/game/logic.test.ts#L96)
+
+**Turn flow and input locking**
+
+- All move legality in one guard: occupied, finished, or computer-pending clicks rejected.
+  [`useGame.ts:42`](../../src/hooks/useGame.ts#L42)
+
+- Reply delay is a cancellable effect; cleanup kills ghost moves on restart/mode change.
+  [`useGame.ts:58`](../../src/hooks/useGame.ts#L58)
+
+- Thinking state is derived, not stored — cannot desync from board/turn.
+  [`useGame.ts:39`](../../src/hooks/useGame.ts#L39)
+
+**Score persistence and StrictMode safety**
+
+- Scores increment exactly once per game: transition-guarded by gameId, not a bare effect.
+  [`App.tsx:24`](../../src/App.tsx#L24)
+
+- Pure initializer + persistence effect; the mount write heals corrupt storage.
+  [`useScores.ts:61`](../../src/hooks/useScores.ts#L61)
+
+- Defensive validation rejects wrong shapes and non-integer counts.
+  [`useScores.ts:13`](../../src/hooks/useScores.ts#L13)
+
+**Accessibility**
+
+- Winning state reaches screen readers via label, not color alone.
+  [`Square.tsx:19`](../../src/components/Square.tsx#L19)
+
+- Status changes announced politely; squares stay focusable when locked.
+  [`App.tsx:44`](../../src/App.tsx#L44)
+
+**Peripherals — tests, config, styles**
+
+- App-level behavior pinned under StrictMode, including vs-computer flow and score-exactly-once.
+  [`App.test.tsx:52`](../../src/App.test.tsx#L52)
+
+- Hook tests cover reply cancellation, input lock, and storage failure modes.
+  [`useGame.test.ts:120`](../../src/hooks/useGame.test.ts#L120)
+
+- `tsc -b` solution layout so vite.config.ts is typechecked too.
+  [`package.json:8`](../../package.json#L8)
+
+- Responsive 320px-up grid, non-color winning cue, visible focus rings.
+  [`styles.css:85`](../../src/styles.css#L85)
