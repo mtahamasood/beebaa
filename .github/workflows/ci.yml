@@ -46,3 +46,25 @@ jobs:
       - run: npm test
 
       - run: npm run build
+
+  e2e:
+    # Also a required-status-check context in master branch protection —
+    # same renaming/matrix caveat as the ci job above.
+    name: e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run test:e2e

@@ -7,8 +7,8 @@ Tic-tac-toe web app: React + Vite + TypeScript SPA with an unbeatable minimax AI
 
 ## Policy
 
-- Never push to `master` — it is protected (required `ci` check, strict, PRs only, linear history). Branch, PR, merge when green: `gh pr merge --auto --squash`.
-- The CI job's display name `ci` is the required-status-check context in branch protection. Renaming it, or adding a `strategy.matrix`, blocks all merges until the protection rule is updated to match.
+- Never push to `master` — it is protected (required `ci` and `e2e` checks, strict, PRs only, linear history). Branch, PR, merge when green: `gh pr merge --auto --squash`.
+- The CI jobs' display names `ci` and `e2e` are the required-status-check contexts in branch protection. Renaming either, or adding a `strategy.matrix`, blocks all merges until the protection rule is updated to match.
 
 ## Where things are
 
