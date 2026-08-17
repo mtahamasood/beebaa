@@ -6,8 +6,8 @@ A tic-tac-toe web app with an **unbeatable minimax AI**. React + Vite + TypeScri
 
 **▶ Play it: https://mtahamasood.github.io/beebaa/**
 
-| Two-player | Vs computer |
-|---|---|
+| Two-player                                                                           | Vs computer                                                                                    |
+| ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
 | ![Winning line highlighted after X takes the top row](docs/screenshots/2-x-wins.png) | ![The computer answering a corner opening with the center](docs/screenshots/3-vs-computer.png) |
 
 ## Features
