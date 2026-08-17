@@ -5,27 +5,34 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # Cancel superseded PR runs, but let every master push finish so no
+  # post-merge commit loses its CI signal.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   ci:
-    # Job name is the required-status-check context in branch protection —
-    # renaming it breaks the master protection rule.
+    # This job's display name is the required-status-check context in the
+    # master branch protection rule. Renaming it — or adding a
+    # strategy.matrix, which turns the context into "ci (…)" — breaks the
+    # rule and blocks all merges until the protection is updated.
     name: ci
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
-          node-version: 22
+          persist-credentials: false
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
           cache: npm
 
       - run: npm ci
