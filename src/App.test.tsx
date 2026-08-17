@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 import { StrictMode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
@@ -8,7 +14,10 @@ function getSquares(container: HTMLElement): HTMLButtonElement[] {
   return Array.from(container.querySelectorAll<HTMLButtonElement>('.square'));
 }
 
-function squareAt(squares: HTMLButtonElement[], index: number): HTMLButtonElement {
+function squareAt(
+  squares: HTMLButtonElement[],
+  index: number,
+): HTMLButtonElement {
   const sq = squares[index];
   if (sq === undefined) throw new Error(`missing square ${index}`);
   return sq;
@@ -43,7 +52,9 @@ describe('App (rendered under StrictMode, as in production main.tsx)', () => {
     );
     expect(screen.getByText('Game mode')).toBeTruthy();
     expect(getSquares(container)).toHaveLength(9);
-    expect(getSquares(container).every((sq) => sq.textContent === '')).toBe(true);
+    expect(getSquares(container).every((sq) => sq.textContent === '')).toBe(
+      true,
+    );
     expect(screen.getByText("X's turn")).toBeTruthy();
     expect(screen.getByLabelText('Scoreboard')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Restart' })).toBeTruthy();
@@ -124,7 +135,9 @@ describe('App (rendered under StrictMode, as in production main.tsx)', () => {
     }
     fireEvent.click(screen.getByRole('button', { name: 'Restart' }));
 
-    expect(getSquares(container).every((sq) => sq.textContent === '')).toBe(true);
+    expect(getSquares(container).every((sq) => sq.textContent === '')).toBe(
+      true,
+    );
     expect(screen.getByText("X's turn")).toBeTruthy();
     expect(getScoreValues(container)).toEqual([1, 0, 0]);
 
@@ -180,7 +193,9 @@ describe('App (rendered under StrictMode, as in production main.tsx)', () => {
     }
     fireEvent.click(screen.getByLabelText('Vs computer'));
 
-    expect(getSquares(container).every((sq) => sq.textContent === '')).toBe(true);
+    expect(getSquares(container).every((sq) => sq.textContent === '')).toBe(
+      true,
+    );
     expect(getScoreValues(container)).toEqual([1, 0, 0]);
   });
 

@@ -42,7 +42,12 @@ export function calculateResult(board: Board): GameResult | null {
   for (const line of WINNING_LINES) {
     const [a, b, c] = line;
     const cell = board[a];
-    if (cell !== null && cell !== undefined && cell === board[b] && cell === board[c]) {
+    if (
+      cell !== null &&
+      cell !== undefined &&
+      cell === board[b] &&
+      cell === board[c]
+    ) {
       return { winner: cell, line };
     }
   }
@@ -61,7 +66,12 @@ function opponent(player: Player): Player {
  * Faster wins score higher; slower losses score higher (less bad),
  * so the computer closes out won positions instead of stalling.
  */
-function minimax(board: Cell[], turn: Player, me: Player, depth: number): number {
+function minimax(
+  board: Cell[],
+  turn: Player,
+  me: Player,
+  depth: number,
+): number {
   const result = calculateResult(board);
   if (result !== null) {
     if (result.winner === null) return 0;
