@@ -115,6 +115,71 @@ useEffect(() => {
 
 ## Suggested Review Order
 
+**Game core (pure, framework-free)**
+
+- Depth-adjusted minimax: prefers faster wins, slower losses — the whole AI in ~25 lines.
+  [`logic.ts:64`](../../src/game/logic.ts#L64)
+
+- Single result shape: winner + winning line, draw, or null while live.
+  [`logic.ts:41`](../../src/game/logic.ts#L41)
+
+- `bestMove` returns -1 on finished boards, so callers never move post-game.
+  [`logic.ts:86`](../../src/game/logic.ts#L86)
+
+**Game state & interaction**
+
+- All move legality in one guard: occupied, finished, or computer pending.
+  [`useGame.ts:42`](../../src/hooks/useGame.ts#L42)
+
+- Computer reply as a cancellable effect — cleanup kills stale timers on restart/mode-change.
+  [`useGame.ts:58`](../../src/hooks/useGame.ts#L58)
+
+- `isComputerThinking` is derived state, not a flag — cannot drift out of sync.
+  [`useGame.ts:39`](../../src/hooks/useGame.ts#L39)
+
+**Score persistence**
+
+- `scoredRef` keyed on `gameId`: exactly one increment per game despite StrictMode double-effects.
+  [`App.tsx:24`](../../src/App.tsx#L24)
+
+- Validator requires non-negative safe integers; malformed storage heals to 0/0/0.
+  [`useScores.ts:13`](../../src/hooks/useScores.ts#L13)
+
+- Load wrapped in nested try/catch: storage that throws degrades to in-memory play.
+  [`useScores.ts:27`](../../src/hooks/useScores.ts#L27)
+
+**Accessibility & UI**
+
+- Squares stay enabled (not `disabled`) so they remain keyboard-focusable; labels carry position, mark, and winning state.
+  [`Square.tsx:19`](../../src/components/Square.tsx#L19)
+
+- Status announced via `aria-live` region — turn, thinking, and result changes are read aloud.
+  [`App.tsx:26`](../../src/App.tsx#L26)
+
+- Winning cue is underline + border, not color alone.
+  [`styles.css:86`](../../src/styles.css#L86)
+
+**Tests (the interesting ones)**
+
+- Exhaustive game-tree sweep: every legal human sequence, computer as X and O — proves unbeatable.
+  [`logic.test.ts:96`](../../src/game/logic.test.ts#L96)
+
+- Mutation-probed timer tests: deleting the effect cleanup fails exactly these two.
+  [`useGame.test.ts:99`](../../src/hooks/useGame.test.ts#L99)
+
+- Second game in the same mount must score again — pins "per game", not "per mount".
+  [`App.test.tsx:131`](../../src/App.test.tsx#L131)
+
+**Toolchain**
+
+- `tsc -b` builds both project references, so `vite.config.ts` is type-checked too.
+  [`package.json:8`](../../package.json#L8)
+
+- Solution-style root config: `files: []` + references to app and node projects.
+  [`tsconfig.json:3`](../../tsconfig.json#L3)
+
+## Suggested Review Order
+
 **Game core — pure rules and the unbeatable AI**
 
 - Depth-adjusted minimax prefers faster wins, slower losses; no pruning needed at 9 cells.
